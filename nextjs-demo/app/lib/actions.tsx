@@ -97,8 +97,10 @@ export async function submitContactUsForm(
     } finally {
         if(success) {
             redirect('/thanks', RedirectType.push)
+        } else {
+            revalidatePath('/contact-us');
+            redirect('/contact-us')
         }
     }
-    revalidatePath('/contact-us');
-    redirect('/contact-us');
+    ;
 }
