@@ -1,12 +1,15 @@
 'use client'
 
+import { clsx } from 'clsx';
 import { Button } from './button'
 import { useFormState } from 'react-dom'
 import { State, submitContactUsForm } from '@/app/lib/actions'
+import { useRouter } from 'next/navigation'
 
 export default function ContactUsForm() {
-    const initialState = { message: null, errors: {} } as State;
+    const initialState = { message: null, errors: {}, isSucess: false} as State;
     const [state, dispatch] = useFormState(submitContactUsForm, initialState)
+    const router = useRouter()
 
     return (
         <form action={dispatch} className="flex bg-gray-50 p-4 m-16 md:p-6 max-w-4xl w-full font-arial" >
@@ -93,14 +96,13 @@ export default function ContactUsForm() {
                         </div>
                     </div>
                     <div id="form-error" aria-live="polite" aria-atomic="true">
-                        {<p className="mt-2 text-sm text-red-500" key={state?.message}>
+                        {<p className={clsx({'mt-2 text-sm text-red-500': state?.isSuccess === false}, {'text-md font-semibold': state?.isSuccess === true})} key={state?.message}>
                             {state?.message}
                         </p>}
                     </div>
-                    <Button type="submit"> Submit</Button>
+                    <Button type="submit" onSubmit={() => router.push('/thanks')}> Submit</Button>
                 </div>
             </div>
         </form>
     )
-
 }

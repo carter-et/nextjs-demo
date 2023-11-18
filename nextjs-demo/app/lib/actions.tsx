@@ -3,7 +3,7 @@
 import { z } from 'zod';
 // import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
-import { RedirectType, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 const { db } = require('@vercel/postgres');
 
@@ -26,6 +26,7 @@ export type State = {
         message?: string[];
     };
     message?: string | null; //not the user message, but the overall form status
+    isSucess?: boolean;
 }
 
 export type Data = {
@@ -80,7 +81,6 @@ export async function submitContactUsForm(
     console.log('attempting to save to postgresdb', validatedFields.data)
 
     const client = await db.connect();
-    let success = false;
 
     try {
         await client.sql`
@@ -88,19 +88,15 @@ export async function submitContactUsForm(
             VALUES (${firstName}, ${lastName}, ${email}, ${message});
         `;
         await client.end();
-        success = true;
+        return {
+            message: 'Form submitted',
+            isSuccess: true
+        }
     } catch (error) {
         await client.end();
         return {
-            message: 'Database Error: Failed to add Contact.'
+            message: 'Database Error: Failed to add Contact.',
+            isSuccess: false
         }
-    } finally {
-        if(success) {
-            redirect('/thanks', RedirectType.push)
-        } else {
-            revalidatePath('/contact-us');
-            redirect('/contact-us')
-        }
-    }
-    ;
+    } 
 }
