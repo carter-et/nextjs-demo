@@ -35,6 +35,8 @@ export type Data = {
     message?: string;
 }
 
+//used code taken from this post: https://stackoverflow.com/questions/3749231/download-file-using-javascript-jquery
+
 const fs = require('fs'); //putting all of this b.s. close together for easy removal
 //honestly, this is a stupid project requirement. when do you ever have to do this?
 function saveAsFile(data: Data) {
