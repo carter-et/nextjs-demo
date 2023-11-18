@@ -28,6 +28,31 @@ export type State = {
     message?: string | null; //not the user message, but the overall form status
 }
 
+export type Data = {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    message?: string;
+}
+
+const fs = require('fs'); //putting all of this b.s. close together for easy removal
+//honestly, this is a stupid project requirement. when do you ever have to do this?
+function saveAsFile(data: Data) {
+    //we know emails should be unique, otherwise the postgresdb wouldn't accept them
+    const dataAsString = `name: ${data.firstName} ${data.lastName}\nemail: ${data.email}\nmessage: ${data.message}`
+    const fileName = data.email?.replace(/\W/g, '')
+
+    fs.writeFile(`contacts/${fileName}.txt`, dataAsString, (err: any) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log('file written successfully')
+            console.log(fs.readFileSync(`contacts/${fileName}.txt`, 'utf8'))
+        }
+    });
+}
+
 export async function submitContactUsForm(
     prevState: State | undefined,
     formData: FormData
@@ -47,6 +72,8 @@ export async function submitContactUsForm(
     }
 
     const { firstName, lastName, email, message } = validatedFields.data;
+    const data = {firstName: firstName, lastName: lastName, email: email, message: message} as Data;
+    saveAsFile(data);
 
     console.log('attempting to save to postgresdb', validatedFields.data)
 
