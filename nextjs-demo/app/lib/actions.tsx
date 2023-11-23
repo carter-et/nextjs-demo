@@ -29,17 +29,16 @@ export type State = {
     isSucess?: boolean;
 }
 
+//-----------------------------------------------------------------------------------------------------------------
+//putting uncommon proj requirement close together for easy removeal
 export type Data = {
     firstName?: string;
     lastName?: string;
     email?: string;
     message?: string;
 }
-
 //used code taken from this post: https://stackoverflow.com/questions/3749231/download-file-using-javascript-jquery
-
-const fs = require('fs'); //putting all of this b.s. close together for easy removal
-//honestly, this is a stupid project requirement. when do you ever have to do this?
+const fs = require('fs'); 
 function saveAsFile(data: Data) {
     //we know emails should be unique, otherwise the postgresdb wouldn't accept them
     const dataAsString = `name: ${data.firstName} ${data.lastName}\nemail: ${data.email}\nmessage: ${data.message}`
@@ -55,6 +54,7 @@ function saveAsFile(data: Data) {
         }
     });
 }
+//-----------------------------------------------------------------------------------------------------------------
 
 export async function submitContactUsForm(
     prevState: State | undefined,
@@ -76,7 +76,7 @@ export async function submitContactUsForm(
 
     const { firstName, lastName, email, message } = validatedFields.data;
     const data = {firstName: firstName, lastName: lastName, email: email, message: message} as Data;
-    saveAsFile(data);
+    saveAsFile(data); //Delete this if you dont want to save to root
 
     console.log('attempting to save to postgresdb', validatedFields.data)
 
